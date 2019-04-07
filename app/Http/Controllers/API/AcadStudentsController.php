@@ -16,11 +16,27 @@ class AcadStudentsController extends Controller
     public function index(Request $request)
     {
         //
-        return DB::table('acad_year_students')
-                    ->where('ay_id', $request->ay_id)
-                    ->join('students', 'acad_year_students.std_id','=','students.id')
-                    ->select('students.*','acad_year_students.ay_student_id')
-                    ->get();
+        if(!empty($request->keyword)){
+            $keyword = $request->keyword;
+            
+            return DB::table('acad_year_students')
+                            ->join('students', 'acad_year_students.std_id','=','students.id')
+                            ->where('ay_id', $request->ay_id)
+                            ->where('students.name','like',"%$request->keyword%")
+                            ->orWhere('students.id','like',"%$request->keyword%")
+                            // ->where([
+                            //     ['students.id','like',"%$request->keyword%"],
+                            //     ['students.name','like',"%$request->keyword%"]
+                            // ])
+                            ->get();
+          
+        }else{
+            return DB::table('acad_year_students')
+                        ->where('ay_id', $request->ay_id)
+                        ->join('students', 'acad_year_students.std_id','=','students.id')
+                        ->select('students.*','acad_year_students.ay_student_id')
+                        ->get();
+        }
     }
 
     /**
@@ -64,8 +80,17 @@ class AcadStudentsController extends Controller
             DB::table('student_events')->insert($students_with_events);
             
             
+            
+           
+          
+
             DB::commit();
-            return response()->json(["message" => "Inserted"]);
+            return $acad_year_students = DB::table('acad_year_students')
+            ->where('ay_id', $request->all()["data"][0]["ay_id"])
+            ->join('students', 'acad_year_students.std_id','=','students.id')
+            ->select('students.*','acad_year_students.ay_student_id')
+            ->get();
+
         } catch (\Exception $e) {
 
             DB::rollback();
@@ -111,7 +136,11 @@ class AcadStudentsController extends Controller
             ->where('student_events_id', $id)
             ->update(["paid" => DB::raw('student_events.paid +'.$request->amount),
              "balance" => DB::raw('student_events.balance -'.$request->amount)]);
-        return response()->json(["message" => "Updated"]);
+        return DB::table('student_events')
+             ->where('std_id', $request->studentEventInfo["std_id"])
+             ->join('events', 'student_events.event_id', '=','events.event_id')
+             ->get();
+        
     }
 
     /**
@@ -120,12 +149,18 @@ class AcadStudentsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request,$id)
     {
         //
         DB::table('acad_year_students')
         ->where('ay_student_id','=',$id)
         ->delete();
-        return response()->json(["message" => "Deleted"]);
+        return DB::table('acad_year_students')
+                        ->where('ay_id', $request->ay_id)
+                        ->join('students', 'acad_year_students.std_id','=','students.id')
+                        ->select('students.*','acad_year_students.ay_student_id')
+                        ->get();
     }
+
+ 
 }

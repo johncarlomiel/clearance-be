@@ -34,7 +34,9 @@ class AccountsController extends Controller
         DB::table('users')->insert(
             ['username' => $request->username, 'pwd' => $request->pwd, 'type' => $request->type]
         );
-        return response()->json(["message" => "Account Added"]);
+        return DB::table('users')
+            ->where('type', '=', 'admin')
+            ->get();
     }
 
     /**
@@ -61,7 +63,9 @@ class AccountsController extends Controller
         DB::table('users')
             ->where('user_id', $id)
             ->update(['username' => $request->username, 'pwd' => $request->pwd, 'type' => $request->type]);
-        return response()->json(["message" => "Account Updated"]);
+            return DB::table('users')
+            ->where('type', '=', 'admin')
+            ->get();
         
     }
 
@@ -75,6 +79,8 @@ class AccountsController extends Controller
     {
         //
         DB::table('users')->where('user_id', '=', $id)->delete();
-        return response()->json(["message" => "User Deleted"]);
+        return DB::table('users')
+            ->where('type', '=', 'admin')
+            ->get();
     }
 }

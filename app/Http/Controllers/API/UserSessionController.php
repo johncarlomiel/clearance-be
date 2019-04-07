@@ -4,8 +4,8 @@ namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\DB;
-class AuthController extends Controller
+
+class UserSessionController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,6 +15,7 @@ class AuthController extends Controller
     public function index()
     {
         //
+        return session('adminSession');
     }
 
     /**
@@ -23,19 +24,6 @@ class AuthController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-
-    public function login(Request $request){
-        $response = DB::table('users')
-        ->where([
-            ['type','=', 'admin'],
-            ['username','=', $request->username],
-            ['pwd','=', $request->pwd],
-        ])
-        ->exists();
-        session('adminSession', false);
-        session(['adminSession' => true]);
-        return response()->json(["isCredentialsTrue" => $response]);
-    }
     public function store(Request $request)
     {
         //

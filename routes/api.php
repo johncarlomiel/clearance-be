@@ -48,5 +48,9 @@ Route::delete('account/{id}','API\AccountsController@destroy')->middleware('cors
 Route::patch('account/{id}', 'API\AccountsController@update')->middleware('cors');
 
 
+Route::get('session','API\UserSessionController@index')->middleware('cors');
+
+
+
 
 

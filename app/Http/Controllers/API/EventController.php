@@ -58,7 +58,9 @@ class EventController extends Controller
             }
             DB::table('student_events')->insert($students_with_events);
             DB::commit();
-            return response()->json(["message" => "Event Added"]);
+            return DB::table('events')
+            ->where('ay_id',$request->ay_id)
+            ->get();
         } catch (\Exception $e) {
             //throw $th;
             DB::rollback();
@@ -90,7 +92,9 @@ class EventController extends Controller
         DB::table('events')
             ->where('event_id', $id)
             ->update(['name' => $request->name, 'amount' => $request->amount, 'term' => $request->term]);
-        return response()->json(["message" => "Event Updated"]);
+            return DB::table('events')
+            ->where('ay_id',$request->ay_id)
+            ->get();
     }
 
     /**
@@ -99,10 +103,12 @@ class EventController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request,$id)
     {
         //
         DB::table('events')->where('event_id', '=', $id)->delete();
-        return response()->json(["message" => "Event Deleted"]);
+        return DB::table('events')
+        ->where('ay_id',$request->ay_id)
+        ->get();
     }
 }

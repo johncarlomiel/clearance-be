@@ -39,7 +39,7 @@ class StudentApiController extends Controller
         $inserted = DB::table('students')->insert(
             ['id' => $request->id, 'name' => "$request->name", 'course' => "$request->course", 'year' => "$request->year"]
         );
-        return response()->json(["message" => "Student Added"]);
+        return DB::table('students')->get();
         
     }
 
@@ -71,7 +71,7 @@ class StudentApiController extends Controller
         DB::table('students')
             ->where('id', $id)
             ->update(['name' => $request->name, 'course' => $request->course, 'year' => $request->year, 'id' => $request->id]);
-        return response()->json(["message" => "Student Updated"]);
+            return DB::table('students')->get();
     }
 
     /**
@@ -84,6 +84,6 @@ class StudentApiController extends Controller
     {
         //
         DB::table('students')->where('id', $id)->delete();
-        return response()->json(["message"=> "Student with id of ".$id." is removed"]);
+        return DB::table('students')->get();
     }
 }
