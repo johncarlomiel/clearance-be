@@ -79,6 +79,34 @@ class EventController extends Controller
         //
     }
 
+    public function report(Request $request,$ay_id){
+        
+
+        $res =  DB::table('acad_year_students')
+                ->where('acad_year_students.ay_id',$ay_id)
+                ->join('students','acad_year_students.std_id', '=','students.id')
+                ->where('students.course', '=', $request->course)
+                ->orderBy('students.course','asc')
+                ->orderBy('students.year','asc')
+                ->orderBy('students.name', 'asc')
+                ->get();
+
+        foreach ($res as $key => $value) {
+            # code...   
+            // return response()->json($value->ay_student_id);
+
+            $events = DB::table('student_events')
+            ->where('student_events.std_id', '=',$value->ay_student_id)
+            ->join('events', 'student_events.event_id', '=','events.event_id')
+            ->get();
+
+            $res[$key]->events = $events;
+
+        }
+                
+        return response()->json($res);
+    }
+
     /**
      * Update the specified resource in storage.
      *

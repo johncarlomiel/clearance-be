@@ -22,33 +22,41 @@ Route::get('acad-year/{id}', 'API\AcadYearController@show')->middleware('cors');
 
 
 Route::post('student', 'API\StudentApiController@store')->middleware('cors');
+Route::post('student/excluded', 'API\StudentApiController@getStudentWithExclude')->middleware('cors');
 Route::patch('student/{id}', 'API\StudentApiController@update')->middleware('cors');
 Route::get('student', 'API\StudentApiController@index')->middleware('cors');
 Route::delete('student/{id}', 'API\StudentApiController@destroy')->middleware('cors');
 Route::get('student/{id}','API\StudentApiController@show')->middleware('cors');
+Route::delete('student/truncate/{id}', 'API\StudentApiController@truncate')->middleware('cors');
+Route::post('student/cluster', 'API\StudentApiController@cluster')->middleware('cors');
+
+
 
 
 
 Route::post('event', 'API\EventController@store')->middleware('cors');
 Route::get('event/{id}', 'API\EventController@index')->middleware('cors');
+Route::get('event/report/{ay_id}', 'API\EventController@report')->middleware('cors');
 Route::delete('event/{id}', 'API\EventController@destroy')->middleware('cors');
 Route::patch('event/{id}', 'API\EventController@update')->middleware('cors');
 
 Route::get('acad-students','API\AcadStudentsController@index')->middleware('cors');
 Route::post('acad-students', 'API\AcadStudentsController@store')->middleware('cors');
+Route::post('acad-students/events','API\AcadStudentsController@storeEvents')->middleware('cors');
+
 Route::delete('acad-students/{id}', 'API\AcadStudentsController@destroy')->middleware('cors');
 Route::get('acad-students/{id}','API\AcadStudentsController@show')->middleware('cors');
 Route::patch('acad-students/{id}','API\AcadStudentsController@update')->middleware('cors');
 
 Route::post('auth', 'API\AuthController@login')->middleware('cors'); 
 
-Route::get('account','API\AccountsController@index')->middleware('cors');
-Route::post('account','API\AccountsController@store')->middleware('cors');
-Route::delete('account/{id}','API\AccountsController@destroy')->middleware('cors');
-Route::patch('account/{id}', 'API\AccountsController@update')->middleware('cors');
+Route::get('account','API\AccountsController@index')->middleware('cors','jwt');
+Route::post('account','API\AccountsController@store')->middleware('cors','jwt');
+Route::delete('account/{id}','API\AccountsController@destroy')->middleware('cors','jwt');
+Route::patch('account/{id}', 'API\AccountsController@update')->middleware('cors','jwt');
 
 
-Route::get('session','API\UserSessionController@index')->middleware('cors');
+Route::get('session','API\UserSessionController@index')->middleware('cors','jwt');
 
 
 

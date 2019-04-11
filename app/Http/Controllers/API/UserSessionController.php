@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class UserSessionController extends Controller
 {
@@ -15,7 +16,8 @@ class UserSessionController extends Controller
     public function index()
     {
         //
-        return session('adminSession');
+        return response()->json(["isLoggedIn" => "hey"]);
+
     }
 
     /**

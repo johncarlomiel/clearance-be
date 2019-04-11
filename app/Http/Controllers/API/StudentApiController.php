@@ -13,18 +13,29 @@ class StudentApiController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    
     public function index(Request $request)
     {
         //
         
-        if(!empty($request->excludedStudents)){
-            return DB::table('students')
-                    ->whereNotIn('id',json_decode($request->excludedStudents))
-                    ->get();
-        }else{
-            return DB::table('students')->get();
+        return DB::table('students')->get();
+    }
+    public function truncate ($id){
+        DB::table('students')->delete();
+        return DB::table('students')->get();
 
-        }
+     }
+
+    public function cluster(Request $request){
+        DB::table('students')->insert($request->data);
+        return DB::table('students')->get();
+    }
+
+    public function getStudentWithExclude(Request $request){
+        return DB::table('students')
+                    ->whereNotIn('id',$request->excludedStudents)
+                    ->get();
     }
 
     /**

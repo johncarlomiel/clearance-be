@@ -48,62 +48,21 @@ class AcadStudentsController extends Controller
     public function store(Request $request)
     {
         //Get all Events in the db
+        DB::table('acad_year_students')->insert($request->data);
+        $noEntryOnEventStds = DB::select('select * from acad_year_students where ay_student_id NOT IN (select std_id FROM student_events WHERE ay_id = '.$request->data[0]["ay_id"].')');
+        $acadStds =  DB::table('acad_year_students')
+        ->where('ay_id', $request->data[0]["ay_id"])
+        ->join('students', 'acad_year_students.std_id','=','students.id')
+        ->select('students.*','acad_year_students.ay_student_id')
+        ->get();
+        return response()->json(
+            ["noEntryOnEventStds" => $noEntryOnEventStds, "acad_students" => $acadStds]
+        );
 
-        DB::beginTransaction();
-
-        try {
-            $events = DB::table('events')
-            ->where('ay_id', $request->all()["data"][0]["ay_id"])
-            ->get();
-
-            $students = [];
-            $students_with_events = [];
-            foreach ($request->all()["data"] as $key => $value) {
-                # code...
-                $ay_stud_id = DB::table('acad_year_students')->insertGetId(
-                    ['std_id' => $value["std_id"], 'ay_id' => $value["ay_id"]]
-                );
-                // return response()->json(["id" => $ay_stud_id]);
-                // array_push($students, ['std_id' => $value["std_id"], 'ay_id' => $value["ay_id"]]);
-                foreach ($events as $eventKey => $eventVal) {
-                    # code...
-                    array_push($students_with_events,
-                    [
-                    "ay_id" => $value["ay_id"],
-                     "std_id" => $ay_stud_id,
-                      "event_id" => $eventVal->event_id,
-                      "balance" => $eventVal->amount
-                    ]);
-                }
-            }
-            // DB::table('acad_year_students')->insert($students);
-            DB::table('student_events')->insert($students_with_events);
-            
-            
-            
-           
-          
-
-            DB::commit();
-            return $acad_year_students = DB::table('acad_year_students')
-            ->where('ay_id', $request->all()["data"][0]["ay_id"])
-            ->join('students', 'acad_year_students.std_id','=','students.id')
-            ->select('students.*','acad_year_students.ay_student_id')
-            ->get();
-
-        } catch (\Exception $e) {
-
-            DB::rollback();
-            return response()->json(["message" => "There is an error on the process"]);
-            //throw $th;
-        }
-
-
-
-       
-      
-        
-        
+    }
+    public function storeEvents(Request $request){
+        DB::table('student_events')->insert($request->container);
+        return response()->json(["message" => "Updated"]);
 
     }
 
